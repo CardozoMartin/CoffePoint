@@ -22,7 +22,8 @@ const clienteSchema = new Schema({
     },
     email: {
         type: String,
-        require: ["el campo es necesario"]
+        require: ["el campo es necesario"],
+        unique: true
     },
     contrasenia: {
         type: String,

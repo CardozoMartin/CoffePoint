@@ -6,6 +6,8 @@ import clienteRouter from './routes/cliente.routes'
 const PORT = 4000
 const app: Application = express();
 
+app.use(express.json()) //permite que el servidor entienda json
+
 //llamamos ala base de datos
 connectDB();
 

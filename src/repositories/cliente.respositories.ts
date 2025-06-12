@@ -17,17 +17,38 @@ export class ClienteRepository implements IClienteRepository{
             return []
         }
     }
-    mostrarClientePorID(id: string): Promise<ICliente | null> {
-        throw new Error('Method not implemented.')
+    async mostrarClientePorID(id: string):   Promise<ICliente | null> {
+        try {
+            return await Cliente.findById(id)
+        } catch (error) {
+            console.log(error)
+            return null
+        }
     }
-    crearCliente(clienteData: Partial<ICliente>): Promise<ICliente> {
-        throw new Error('Method not implemented.')
+    async crearCliente(clienteData: Partial<ICliente>): Promise<ICliente> {
+        try {
+           
+            const nuevoCliente = new Cliente(clienteData)
+            const guardarCliente = await nuevoCliente.save()
+            return guardarCliente
+        } catch (error) {
+            throw error
+        }
     }
-    actualizarCliente(id: string, clienteData: Partial<ICliente>): Promise<ICliente | null> {
-        throw new Error('Method not implemented.')
+    async actualizarCliente(id: string, clienteData: Partial<ICliente>): Promise<ICliente | null> {
+        try {
+            return await Cliente.findByIdAndUpdate(id,clienteData,{new:true})
+        } catch (error) {
+            return null
+        }
     }
-    eliminarCliente(id: string): Promise<boolean> {
-        throw new Error('Method not implemented.')
+    async eliminarCliente(id: string): Promise<boolean> {
+        try {
+            const resultado = Cliente.findByIdAndDelete(id)
+            return resultado !== null;
+        } catch (error) {
+            return false
+        }
     }
     
 }
