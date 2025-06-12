@@ -1,7 +1,7 @@
 import express, { Application} from 'express'
 import connectDB from './database/config';
 import clienteRouter from './routes/cliente.routes'
-
+import authRouter from './routes/auth.routes'
 //creamos el puerto y la variable de express
 const PORT = 4000
 const app: Application = express();
@@ -22,7 +22,7 @@ connectDB();
 
 
 //rutas
-
+app.use('/api/auth',authRouter)
 app.use("/api/cliente",clienteRouter)
 
 

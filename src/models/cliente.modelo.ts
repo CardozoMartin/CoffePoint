@@ -1,47 +1,45 @@
 import { Document, model, Schema } from "mongoose";
 
 export interface ICliente extends Document {
-    nombre: string
-    apellido: string
-    email: string
-    contrasenia: string
-    telefono: string
-    direccion: string
+    nombre: string;
+    apellido: string;
+    email: string;
+    contrasenia: string;
+    telefono: string;
+    direccion: string;
 }
-
-
 
 const clienteSchema = new Schema({
     nombre: {
         type: String,
-        require: ["el campo es necesario"]
+        required: [true, "El nombre es necesario"] 
     },
     apellido: {
         type: String,
-        require: ["el campo es necesario"]
+        required: [true, "El apellido es necesario"] 
     },
     email: {
         type: String,
-        require: ["el campo es necesario"],
-        unique: true
+        required: [true, "El email es necesario"], 
+        unique: true,
+        lowercase: true, 
+        trim: true 
     },
     contrasenia: {
         type: String,
-        require: ["el campo es necesario"]
+        required: [true, "La contraseña es necesaria"] 
     },
     telefono: {
         type: String,
-        require: ["el campoe es necesario"]
+        required: [true, "El teléfono es necesario"] 
     },
     direccion: {
         type: String,
-        require: ["el campo es necesario"]
+        required: [true, "La dirección es necesaria"] 
     }
+}, {
+    timestamps: true, 
+    versionKey: false 
+});
 
-})
-
-export default model<ICliente>('Cliente', clienteSchema)
-
-
-
-
+export default model<ICliente>('Cliente', clienteSchema);

@@ -12,6 +12,7 @@ export interface IClienteRepository{
 export class ClienteRepository implements IClienteRepository{
    async mostrarTodosLosUsuarios(): Promise<ICliente[]> {
         try {
+            
             return await Cliente.find()
         } catch (error) {
             return []
