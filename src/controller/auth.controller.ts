@@ -8,8 +8,6 @@ dotenv.config()
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 export class auth {
 
-
-
     crearSession = async (req: Request, res: Response): Promise<void> => {
         const { email, contrasenia } = req.body;
 
