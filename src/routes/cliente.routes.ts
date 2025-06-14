@@ -1,15 +1,19 @@
 import { Router} from 'express';
 import { ClienteController } from '../controller/cliente.controller';
-import { validarCliente } from '../middleware/validateCliente';
+import validacionMiddleware from '../middleware/validateCliente';
+import schemaCliente  from '../utils/crearClienteSchema'
 
 
 const router = Router();
 const clienteController = new ClienteController();
 
 
+
 router.get('/mostrarusuario',clienteController.obtenerTodosLosClientes)
 router.get('/mostrarusuario/:id',clienteController.obtenerClientePorID)
-router.post('/crearcliente', clienteController.cargarNuevoCliente)
+router.post('/crearcliente',validacionMiddleware.validacionSchema(schemaCliente)
+ ,clienteController.cargarNuevoCliente)
+
 router.put('/actualizarcliente/:id',clienteController.actualizarCliente)
 router.delete('/eliminarcliente/:id',clienteController.eliminarCliente)
 

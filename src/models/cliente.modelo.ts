@@ -7,9 +7,14 @@ export interface ICliente extends Document {
     contrasenia: string
     telefono: string
     direccion: string
+    rol : Roles
 }
 
-
+export enum Roles{
+    ADMIN = 'admin',
+    CLIENTE = 'cliente',
+    CAJERO = 'cajero'
+}
 
 const clienteSchema = new Schema({
     nombre: {
@@ -36,6 +41,12 @@ const clienteSchema = new Schema({
     direccion: {
         type: String,
         require: ["el campo es necesario"]
+    },
+    rol:{
+        type:String,
+        enum: Object.values(Roles),
+        default : Roles.CLIENTE,
+        required: [true, 'el rol es necesario']
     }
 
 })

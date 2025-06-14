@@ -2,6 +2,18 @@ import { ICliente } from "../models/cliente.modelo";
 import { ClienteRepository, IClienteRepository } from "../repositories/cliente.respositories";
 import bycript from "bcryptjs";
 
+
+//patron DTO los datos que quremos devovler al front del cliente
+
+export interface IClienteSeguro{
+    id: string;
+    nombre: string;
+    apellido: string;
+    email: string;
+    telefono: string;
+    direccion: string;
+}
+
 export class ClienteServicio {
 
     //variable que maneja la depencia
@@ -10,13 +22,35 @@ export class ClienteServicio {
     constructor(clienteRepo?: IClienteRepository){
         this.clienteRepo = clienteRepo || new ClienteRepository();
     }
-
+    //metodo para deolver a los lciente segudors de info
+    private clienteSeguro(cliente: ICliente): IClienteSeguro {
+        return {
+            id: cliente.id,
+            nombre: cliente.nombre,
+            apellido: cliente.apellido,
+            email: cliente.email,
+            telefono: cliente.telefono,
+            direccion: cliente.direccion,
+            rol:cliente.rol
+        };
+    }
 
     //Manejamos toda la logica que usara nuestro servicios
 
-    async obtenerClientes(): Promise<ICliente[]>{
-        return await this.clienteRepo.mostrarTodosLosUsuarios()
+    async obtenerClientes(): Promise<IClienteSeguro[]>{
+        //guardar los datos que enviamos en una variable
+
+        const datosClientes = await this.clienteRepo.mostrarTodosLosUsuarios();
+
+        //ahora mapeamos los nuevos datos que vamos a enviar al front
+
+        const clientesDatosNuevos = datosClientes.map((cliente)=> this.clienteSeguro(cliente))
+
+        return clientesDatosNuevos;
     }
+
+
+
     async obtenerClientePorId(id:string): Promise<ICliente | null>{
         
         return await this.clienteRepo.mostrarClientePorID(id)
