@@ -3,14 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-<<<<<<< HEAD
-    "dev":"ts-node-dev --respawn --transpile-only src/index.ts"
-=======
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "chmod +x ./node_modules/.bin/esbuild && esbuild src/index.ts --bundle --platform=node --outfile=dist/index.cjs --minify",
     "start": "node dist/index.cjs",
     "lint": "prettier . -w && eslint . --fix"
->>>>>>> c08ecf210df234bc0e2708b8e1f3a61418f563f0
   },
   "keywords": [],
   "author": "",
@@ -22,13 +18,15 @@
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "joi": "^17.13.3",
-    "mongoose": "^8.15.1"
+    "mongoose": "^8.15.1",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/helmet": "^0.0.48",
     "@types/node": "^24.0.0",
+    "@types/uuid": "^10.0.0",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
