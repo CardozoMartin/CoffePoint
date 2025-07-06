@@ -3,14 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-<<<<<<< HEAD
-    "dev":"ts-node-dev --respawn --transpile-only src/index.ts"
-=======
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "chmod +x ./node_modules/.bin/esbuild && esbuild src/index.ts --bundle --platform=node --outfile=dist/index.cjs --minify",
     "start": "node dist/index.cjs",
     "lint": "prettier . -w && eslint . --fix"
->>>>>>> c08ecf210df234bc0e2708b8e1f3a61418f563f0
   },
   "keywords": [],
   "author": "",

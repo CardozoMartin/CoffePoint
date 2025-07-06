@@ -28,6 +28,7 @@ app.use("/api/cliente",clienteRouter)
 
 
 
+
 //iniciamos el servidor de express
 app.listen(PORT , ()=>{
     console.log("express funcionando en el puerto", PORT)
