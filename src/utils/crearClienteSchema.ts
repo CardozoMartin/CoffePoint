@@ -13,22 +13,22 @@ const crearClienteSchema = Joi.object({
     "string.max": "El campo no puede tener mas de 20 letras",
     "any.required": "El campo nombre es requerido",
   }),
-  email: Joi.string().min(3).max(20).required().messages({
+  email: Joi.string().min(3).max(100).required().messages({
     "string.empty": " El email es requerido o no puede estar vacio",
     "string.min": "El campo necesita mas de 3 letras",
     "string.max": "El campo no puede tener mas de 20 letras",
     "any.required": "El campo nombre es requerido",
   }),
-  contrasenia: Joi.string().min(3).max(20).required().messages({
+  contrasenia: Joi.string().min(3).max(100).required().messages({
     "string.empty": " El contraseña es requerido o no puede estar vacio",
     "string.min": "El campo necesita mas de 3 letras",
     "string.max": "El campo no puede tener mas de 20 letras",
     "any.required": "El campo nombre es requerido",
   }),
-  telefono: Joi.string().min(3).max(20).required().messages({
+  telefono: Joi.string().min(10).max(12).required().messages({
     "string.empty": " El telefono es requerido o no puede estar vacio",
-    "string.min": "El campo necesita mas de 3 letras",
-    "string.max": "El campo no puede tener mas de 20 letras",
+    "string.min": "El campo necesita mas de 10 letras",
+    "string.max": "El campo no puede tener mas de 12 letras",
     "any.required": "El campo nombre es requerido",
   }),
   direccion: Joi.string().min(3).max(20).required().messages({

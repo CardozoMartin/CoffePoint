@@ -45,13 +45,8 @@ export class MembresiaClienteServicio {
     };
   }
 
-  async asignarMembresiaACliente(
-    clienteId: string,
-    membresiaId: string
-  ): Promise<IMembresiaClienteSeguro> {
-    const membresia = await this.membresiaRepo.obtenerMembresiaPorId(
-      membresiaId
-    );
+  async asignarMembresiaACliente(clienteId: string,membresiaId: string): Promise<IMembresiaClienteSeguro> {
+    const membresia = await this.membresiaRepo.obtenerMembresiaPorId(membresiaId);
     if (!membresia) {
       throw new Error("Membresía no encontrada");
     }

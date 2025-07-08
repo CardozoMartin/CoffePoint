@@ -28,6 +28,7 @@ const membresiaClienteSchema = new Schema<IMembresiaCliente>(
     fechaFin: {
       type: Date,
       required: true,
+      default: null
     },
     estado: {
       type: String,

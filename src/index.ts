@@ -5,9 +5,18 @@ import promocionRouter from "./routes/promocion.routes";
 import membresiaRouter from "./routes/membresia.routes";
 import productoRouter from "./routes/producto.routes";
 import sucursalRouter from "./routes/sucursal.routes";
+import cors from "cors";
 //creamos el puerto y la variable de express
 const PORT = 4000;
 const app: Application = express();
+
+//configuramos los cors
+
+app.use(cors({
+  origin: "http://localhost:5173", //puerto del front
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}))
 
 app.use(express.json()); //permite que el servidor entienda json
 

@@ -4,7 +4,7 @@ import { Schema, model, Document } from "mongoose";
 export interface IMembresia extends Document {
   nombre: string;
   precio: number;
-  duracionDias: number; // Duración en días
+  duracionDias: number; 
   beneficios: string[];
   estado: "activa" | "inactiva";
 }
@@ -19,15 +19,18 @@ const membresiaSchema = new Schema<IMembresia>(
     precio: {
       type: Number,
       required: true,
+      default: 0
     },
     duracionDias: {
       type: Number,
       required: true,
+      default: 0, // Duración por defecto de 30 días
     },
     beneficios: [
       {
         type: String,
         required: true,
+        default: "Acceso a la tienda",
       },
     ],
     estado: {

@@ -42,6 +42,12 @@ export class MembresiaServicio {
     return this.membresiaSeguro(membresia);
   }
 
+  async obtenerMembresiaPorNombre(nombre: string): Promise<IMembresiaSeguro | null> {
+    const membresia = await this.membresiaRepo.obtenerMembresiaPorNombre(nombre);
+    if (!membresia) return null;
+    return this.membresiaSeguro(membresia);
+  }
+
   async crearMembresia(data: Partial<IMembresia>): Promise<IMembresiaSeguro> {
     const nuevaMembresia = await this.membresiaRepo.crearMembresia(data);
     return this.membresiaSeguro(nuevaMembresia);

@@ -47,7 +47,7 @@ export class ClienteController {
         
     }
     cargarNuevoCliente = async (req:Request, res:Response): Promise<void> =>{
-            
+            console.log(req.body)
            
         try {
             const nuevoCliente = await this.clienteServ.crearNuevoCliente(req.body)
@@ -57,10 +57,16 @@ export class ClienteController {
                 nuevoCliente
             })
         } catch (error) {
-            
+            if(error.message.includes('duplicate')){
+                res.status(400).json({
+                    message: "El email ya está registrado",
+                })
+            }
+            console.error("Error detallado al crear cliente:", error);
            
             res.status(500).json({
-                message:"Error al crear el cliente"
+                message:"Error al crear el cliente",
+                error: error instanceof Error ? error.message : "Error desconocido"
             })
         }
     }
@@ -108,6 +114,23 @@ export class ClienteController {
             res.status(500).json({
                 message:"Error al eliminar el cliente"
             })
+        }
+    }
+
+    //controlador para obtener todos los clientes con sus membresias
+    obtenerClientesConMembresia = async (req:Request, res:Response): Promise<void> => {
+        try {
+            const clientesConMembresia = await this.clienteServ.obtenerClientesConMembresia();
+            res.status(200).json({
+                message: "Clientes con membresía",
+                clientesConMembresia
+            });
+        } catch (error) {
+            console.error("Error al obtener clientes con membresía:", error);
+            res.status(500).json({
+                message: "Error al obtener clientes con membresía",
+                error: error instanceof Error ? error.message : "Error desconocido"
+            });
         }
     }
 }

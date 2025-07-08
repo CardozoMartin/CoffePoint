@@ -1,7 +1,7 @@
 // src/repositories/membresiaCliente.repositories.ts
 import MembresiaCliente, {
   IMembresiaCliente,
-} from "../models/membresiacliente.modelo";
+} from "../models/membresiaCliente.modelo";
 
 export interface IMembresiaClienteRepository {
   crearMembresiaCliente(

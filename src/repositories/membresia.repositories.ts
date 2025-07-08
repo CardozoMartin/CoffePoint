@@ -3,6 +3,7 @@ import Membresia, { IMembresia } from "../models/membresia.modelo";
 export interface IMembresiaRepository {
   crearMembresia(data: Partial<IMembresia>): Promise<IMembresia>;
   obtenerMembresiaPorId(id: string): Promise<IMembresia | null>;
+  obtenerMembresiaPorNombre(nombre: string): Promise<IMembresia | null>;
   obtenerTodasLasMembresia(): Promise<IMembresia[]>;
   actualizarMembresia(
     id: string,
@@ -22,6 +23,15 @@ export class MembresiaRepository implements IMembresiaRepository {
       return await Membresia.findById(id);
     } catch (error) {
       console.error("Error al obtener la membresía por ID:", error);
+      return null;
+    }
+  }
+
+  async obtenerMembresiaPorNombre(nombre: string): Promise<IMembresia | null> {
+    try {
+      return await Membresia.findOne({ nombre });
+    } catch (error) {
+      console.error("Error al obtener la membresía por nombre:", error);
       return null;
     }
   }
