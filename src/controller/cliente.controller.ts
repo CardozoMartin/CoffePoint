@@ -1,12 +1,10 @@
 import { Request, Response } from "express"
 import { ClienteServicio } from "../services/cliente.servicio"
 
-
-
 export class ClienteController {
 
-
-    //variable la de servicio
+  
+    
     private clienteServ : ClienteServicio;
 
     //constructor que para iniciar
@@ -133,5 +131,45 @@ export class ClienteController {
             });
         }
     }
+
+    //cambiamos el estado de verificado a true
+    cambiarEstado = async (req: Request, res: Response): Promise<void> => {
+        // Obtenemos el email del cuerpo de la solicitud
+        const { email } = req.params;
+        
+
+        try {
+            const clienteVerificado = await this.clienteServ.verificarCuenta(email);
+
+            res.status(200).json({
+                message: "Cuenta verificada correctamente",
+               
+            });
+        } catch (error) {
+            console.error("Error al cambiar el estado de verificación:", error);
+            res.status(500).json({
+                message: "Error al cambiar el estado de verificación",
+                error: error instanceof Error ? error.message : "Error desconocido"
+            });
+        }
+    }
+
+    // Endpoint para verificar cuenta por token con redirección amigable
+    verificarCuenta = async (req: Request, res: Response): Promise<void> => {
+        const { token } = req.params;
+        try {
+            const cliente = await this.clienteServ.verificarCuentaPorToken(token);
+            if (!cliente) {
+                // Redirige a una página de error si el token es inválido
+                res.redirect('/login');
+                return;
+            }
+            // Redirige a una página de éxito si la verificación fue correcta
+            res.redirect('www.google.com');
+        } catch (error) {
+            res.redirect('https://tusitio.com/verificacion-error');
+        }
+    }
+    
 }
 

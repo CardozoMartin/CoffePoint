@@ -10,6 +10,8 @@ export interface ICliente extends Document {
   rol: "cliente" | "admin" | "cajero";
   membershipLevel: "bronce" | "gold" | "diamond";
   points: number;
+  estaVerificado: boolean;
+  verificationToken?: string;
 }
 
 export enum Roles {
@@ -70,6 +72,15 @@ const clienteSchema = new Schema(
       type: Number,
       default: 0,
     },
+    estaVerificado: {
+      type: Boolean,
+      default: false
+    },
+    verificationToken: {
+      type: String,
+      required: false,
+      default: null
+    }
   },
   { timestamps: true }
 );

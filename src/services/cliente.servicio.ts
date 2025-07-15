@@ -1,4 +1,5 @@
 import { ICliente } from "../models/cliente.modelo";
+import crypto from "crypto";
 import {
   ClienteRepository,
   IClienteRepository,
@@ -6,6 +7,7 @@ import {
 import bcript from "bcryptjs";
 import { MembresiaServicio } from "./membresia.servicio";
 import { MembresiaClienteServicio } from "./membresiaCliente.servicio";
+import { EmailService } from "./email.servicio";
 
 //patron DTO los datos que quremos devovler al front del cliente
 
@@ -16,6 +18,7 @@ export interface IClienteSeguro {
   email: string;
   telefono: string;
   direccion: string;
+  estaVerificado?: boolean;
   rol: "cliente" | "admin" | "cajero";
 }
 
@@ -24,15 +27,17 @@ export class ClienteServicio {
   private clienteRepo: IClienteRepository;
   private membresiaServicio: MembresiaServicio;
   private membresiaClienteServi: MembresiaClienteServicio;
+  private emailService;
 
   constructor(
-    clienteRepo?: IClienteRepository, 
+    clienteRepo?: IClienteRepository,
     membresiaServicio?: MembresiaServicio,
     membresiaClienteServi?: MembresiaClienteServicio
   ) {
     this.clienteRepo = clienteRepo || new ClienteRepository();
     this.membresiaServicio = membresiaServicio || new MembresiaServicio();
     this.membresiaClienteServi = membresiaClienteServi || new MembresiaClienteServicio();
+    this.emailService = new EmailService();
   }
   //metodo para deolver a los lciente segudors de info
   private clienteSeguro(cliente: ICliente): IClienteSeguro {
@@ -44,6 +49,7 @@ export class ClienteServicio {
       telefono: cliente.telefono,
       direccion: cliente.direccion,
       rol: cliente.rol,
+      estaVerificado: cliente.estaVerificado,
     };
   }
 
@@ -67,10 +73,10 @@ export class ClienteServicio {
     return await this.clienteRepo.mostrarClientePorID(id);
   }
   async crearNuevoCliente(clienteData: Partial<ICliente>): Promise<ICliente> {
-    console.log("Iniciando creación de cliente:", clienteData);
+
     try {
-      console.log("1. Iniciando creación de cliente:", clienteData);
-      
+
+
       const { contrasenia } = clienteData;
       if (!contrasenia) {
         throw new Error("La contraseña es requerida");
@@ -81,50 +87,60 @@ export class ClienteServicio {
       const hash = await bcript.hash(contrasenia, salt);
       //guardar la contraseña encriptada
       clienteData.contrasenia = hash;
-      
-      console.log("2. Buscando membresía básica...");
+
+      // Generar token de verificación
+      const verificationToken = crypto.randomBytes(32).toString("hex");
+      clienteData.verificationToken = verificationToken;
+
+
       // Obtener la membresía básica por nombre (puedes cambiar "basica" por el nombre exacto que tienes)
       const membresiaBasica = await this.membresiaServicio.obtenerMembresiaPorNombre("basica");
-      
-      console.log("3. Membresía encontrada:", membresiaBasica);
-      
+
+
+
       if (!membresiaBasica) {
         // Si no encuentra "basica", buscar la primera membresía disponible
-        console.log("4. No se encontró 'basica', buscando primera membresía disponible...");
+
         const todasLasMembresias = await this.membresiaServicio.obtenerMembresias();
-        
+
         if (todasLasMembresias.length === 0) {
           throw new Error("No hay membresías disponibles en el sistema");
         }
-        
+
         // Usar la primera membresía encontrada
         const primeraMembresia = todasLasMembresias[0];
-        console.log("5. Usando membresía:", primeraMembresia.nombre);
-        
+
+
         // Crear el cliente
         const nuevoCliente = await this.clienteRepo.crearCliente(clienteData);
-        
+
         // Asociar la primera membresía disponible
         await this.membresiaClienteServi.asignarMembresiaACliente(
           nuevoCliente.id,
           primeraMembresia.id
         );
-        
+        //logica para enviar el email al usuario registrado
+
         return nuevoCliente;
       }
 
-      console.log("6. Creando cliente...");
+
       // Crear el cliente
       const nuevoCliente = await this.clienteRepo.crearCliente(clienteData);
-      
-      console.log("7. Asociando membresía al cliente...");
+
+
       // Asociar la membresía básica al cliente recién creado
       await this.membresiaClienteServi.asignarMembresiaACliente(
         nuevoCliente.id,
         membresiaBasica.id
       );
-      
-      console.log("8. Cliente creado y membresía asociada exitosamente");
+
+      await this.emailService.enviarEmailDeBienvenida(
+        nuevoCliente.email,
+        nuevoCliente.nombre,
+        nuevoCliente.verificationToken || ""
+      );
+
       return nuevoCliente;
     } catch (error) {
       console.error("Error en crearNuevoCliente:", error);
@@ -156,5 +172,46 @@ export class ClienteServicio {
     );
 
     return clientesConMembresia;
+  }
+
+  //servicio para cambiar el verificado de false a true enviado por email
+  async verificarCuenta(email: string): Promise<void> {
+
+    console.log("Verificando cuenta para el email:", email);
+    try {
+      //buscamos el usaurio por el email
+      const clienteAVerificar = await this.clienteRepo.mostrarTodosLosUsuarios();
+     
+
+      //si encontramos el usuarios lo guardamos en una variable
+
+      const cliente = clienteAVerificar.find((cliente) => cliente.email === email)
+      console.log("Cliente encontrado:", cliente);
+      // si no se encontro el cliente notificamos
+      if (!cliente) {
+        throw new Error("Cliente no encontrado");
+      }
+      //si encontramos al cliente cambiamos el estado
+
+      cliente.estaVerificado = true;
+      //actualizamos el cliente en la base de datos
+      await this.clienteRepo.actualizarCliente(cliente.id, cliente);
+     
+
+    } catch (error) {
+      console.error("Error al verificar la cuenta:", error);
+      throw new Error("No se pudo verificar la cuenta.");
+    }
+  }
+
+  //servicio para cambiar el verificado de false a true usando el token
+  async verificarCuentaPorToken(token: string): Promise<ICliente | null> {
+    const clientes = await this.clienteRepo.mostrarTodosLosUsuarios();
+    const cliente = clientes.find((c) => c.verificationToken === token);
+    if (!cliente) return null;
+    cliente.estaVerificado = true;
+    cliente.verificationToken = undefined;
+    await this.clienteRepo.actualizarCliente(cliente.id, cliente);
+    return cliente;
   }
 }
